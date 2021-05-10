@@ -5,4 +5,4 @@
 # ignores all data files
 *.Rdata
 *.RData
-
+data_split/*.Rdata
