@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-# ignore all data files
+# ignores all data files
 *.Rdata
 *.RData
 

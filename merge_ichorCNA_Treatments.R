@@ -1,4 +1,6 @@
 
+############# MERGE ichorCNA dataset with Treatments dataset
+
 # load data files
 load("~/Box/PhD/Code/ctDNA/updated/pre_process_ichor.Rdata") # ichorCNA formatted
 load("~/Box/PhD/Code/ctDNA/updated/treatments_simplified.Rdata") # Treatments BASE-simplified - New file
