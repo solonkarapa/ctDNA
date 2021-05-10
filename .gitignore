@@ -1,6 +1,6 @@
 .Rproj.user
 .Rhistory
-.RData
+*.RData
 .Ruserdata
 *.Rdata           # ignore all data files
 #!final.data      # except final.data
