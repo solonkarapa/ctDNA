@@ -13,6 +13,7 @@ load("~/Box/PhD/Code/ctDNA/updated/RECIST_Treatments.Rdata") # for mac
 
 ################ 
 # transformations and select cols
+# time unit conversion
 data_RECIST_time <- RECIST_treatments %>% 
     mutate(time = as.numeric(time/52.14), # time in years
            Treatment_duration = Treatment_duration/52.14) %>% # duration in years
@@ -30,13 +31,13 @@ data_excluded_ind_pat <- data_RECIST_time %>%
     filter(!Patient.ID %in% patients_dyn_pred)
 
 ################ 
-# keep patients with > 1 ctDNA measurment             
+# keep patients with > 1 ctDNA measurement             
 patients_keep <- data_excluded_ind_pat %>% 
     group_by(Patient.ID) %>% 
     summarise(measur_per_patient = n()) %>% 
     filter(measur_per_patient > 1)
 
-# filter based on max Date per Patient.ID and >1 ctDNA measurment
+# filter based on max Date per Patient.ID and >1 ctDNA measurement
 df_max_Date <- data_excluded_ind_pat %>% 
     filter(Patient.ID %in% patients_keep$Patient.ID) %>% 
     group_by(Patient.ID) %>% 
