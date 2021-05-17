@@ -97,8 +97,8 @@ fit2_CT_no_ichor <- brm(Progression ~ time + ER.status + Her2.status + Treatment
 ################# Post-processing ################################
 ##################################################################
 #library(coda) # Summary Statistics For MCMC
-p <- as.mcmc(fit2_CT_ichor)
-summary(p)
+#p <- as.mcmc(fit2_CT_ichor)
+#summary(p)
 
 summary(fit2_CT_ichor)
 summary(fit2_CT_no_ichor)
