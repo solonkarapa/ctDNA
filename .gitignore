@@ -6,3 +6,4 @@
 *.Rdata
 *.RData
 data_split/*.Rdata
+model/model_1st_stage.Rdata
