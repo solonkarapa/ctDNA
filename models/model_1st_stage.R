@@ -30,7 +30,7 @@ prior_custom <- c(set_prior("normal(0, 100)", class = "b"), # fixed effects prio
                   set_prior("lkj(1)", class = "cor")) # prior for correlation coef for random effects
 
 fit1_ichor <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment_new_final + Treatment_duration +
-                               (1 + time_ichor| Patient.ID),
+                               (1 + time_ichor | Patient.ID),
                            data = df_train_ichor, 
                            family = gaussian(), 
                            prior = prior_custom,
