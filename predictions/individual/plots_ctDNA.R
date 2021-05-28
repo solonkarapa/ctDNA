@@ -49,13 +49,12 @@ for(i in 1:length(df_comb_plot_split)){
 ############################################ 
 ############################################ 
 # pick a subject
-subj <- subject[2]
+subj <- subject[3]
 
 cbp2 <- rev(c("#000000", "#E69F00", "#56B4E9", "#009E73",
               "#F0E442", "#CC79A7", "#0072B2", "#D55E00"))
 
 pretty_labels <- function(x) paste0("timepoint:", x)
-
 
 df_final_plot %>% 
     filter(Patient.ID == subj) %>% 
