@@ -1,7 +1,7 @@
 # get array element number
 task_id_string <- Sys.getenv("SLURM_ARRAY_TASK_ID") 
 task_id <- as.numeric(task_id_string)
-#task_id = 3
+task_id = 1
 
 ########################################################################
 #################################### Step 1 ############################
@@ -43,11 +43,16 @@ df_new_preds_1 <- df_combine_1 %>%
     mutate(abs_diff = abs(time_ichor - time)) %>% #compute time gap 
     group_by(Patient.ID, time) %>% # for each Patient and CT timepoint
     mutate(time_ichor = ifelse(abs_diff == min(abs_diff), time, time_ichor)) %>% # project the CT timepoint to the ichor timepoint
-    select(Patient.ID, Her2.status.x, ER.status.x, 
-           Treatment_new_final.y, Treatment_duration.y,  
+    select(Patient.ID, 
+           Her2.status.x, 
+           ER.status.x, 
+           Treatment_new_final.y, 
+           Treatment_duration.y,  
            ichorCNA_tr, 
            time, time_ichor) %>% 
-    rename(Her2.status = Her2.status.x, ER.status = ER.status.x, Treatment_new_final = Treatment_new_final.y,
+    rename(Her2.status = Her2.status.x, 
+           ER.status = ER.status.x, 
+           Treatment_new_final = Treatment_new_final.y,
            Treatment_duration = Treatment_duration.y) %>%
     mutate(Treatment_duration = as.numeric(Treatment_duration))
 
@@ -86,48 +91,47 @@ df_final <- data.frame()
 
 system.time({
 for(g in 1:length(df_new_preds_1_split)){
-    
+
     data_new_stage1 <- df_new_preds_1_split[[g]]
-    
-    # select only measurements under the same treatment regime 
-    most_recent_treat <- data_new_stage1 %>% 
-        summarise(uniq_treat = unique(Treatment_new_final)) %>% 
+
+    # select only measurements under the same treatment regime
+    most_recent_treat <- data_new_stage1 %>%
+        summarise(uniq_treat = unique(Treatment_new_final)) %>%
         slice(n())
-    
-    datagrid <- expand.grid(i = as.numeric(1:iters), 
-                            index_patient = subject[task_id], 
+
+    datagrid <- expand.grid(i = as.numeric(1:iters),
+                            index_patient = subject[task_id],
                             timepoint = unique(data_new_stage1$time))
-    
-    res <- datagrid %>% 
-        mutate(res_rand = pmap(., pred_random_effects_update)) %>% 
+
+    res <- datagrid %>%
+        mutate(res_rand = pmap(., pred_random_effects_update)) %>%
         unnest_wider(res_rand, names_sep = "_") %>%
         group_by(timepoint, index_patient) %>%
         summarise(estim_inter = mean(res_rand_1), estim_slope = mean(res_rand_2)) %>%
         rename(Patient.ID = index_patient, time_ichor = timepoint)
-    
-    print(res)
+
     # merge df with estimated random effects
     df_stage1_prelim <- merge(res, data_new_stage1, by = c("Patient.ID", "time_ichor"))
-    
+
     df_final <- rbind(df_final, df_stage1_prelim)
 }
 
 })
 
 str(df_final)
-
+ 
 # merge datasets     
 df_combine_2 <- merge(data_new_stage2, df_final, by = c("Patient.ID", "time")) 
-
-df_new_preds <- df_combine_2 %>% 
+ 
+df_new_preds <- df_combine_2 %>%
     group_by(Patient.ID) %>%
     filter(time_ichor <= time) %>% # keep ichorCNA if earlier than CT scan
-    #mutate(abs_diff = abs(time_ichor - time)) %>% # compute time gap 
+    #mutate(abs_diff = abs(time_ichor - time)) %>% # compute time gap
     #filter(abs_diff <= time_window) %>% # keep if gap within the time_window
-    group_by(Patient.ID, time) %>% 
+    group_by(Patient.ID, time) %>%
     #filter(abs_diff == min(abs_diff)) %>% # for each CT timepoint and patient keep min time gap
-    select(Patient.ID:Her2.status.x, Treatment_new_final.x, 
-           Treatment_duration.x, time, time_ichor, estim_inter, estim_slope, Progression) %>% 
+    select(Patient.ID:Her2.status.x, Treatment_new_final.x,
+           Treatment_duration.x, time, time_ichor, estim_inter, estim_slope, Progression) %>%
     rename(Her2.status = Her2.status.x, ER.status = ER.status.x, Treatment_new_final = Treatment_new_final.x,
            Treatment_duration = Treatment_duration.x) %>%
     mutate(Treatment_duration = as.numeric(Treatment_duration)) %>%
