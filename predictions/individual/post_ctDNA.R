@@ -96,3 +96,4 @@ for (i in 1:length(subject)) {
 #     geom_point( aes(y = as.numeric(as.factor(Progression)) - 1, x = time, shape = as.factor(Progression)), shape = 3, size = 3) +
 #     theme_classic(base_size = 12)
 # 
+

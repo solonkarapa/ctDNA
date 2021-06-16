@@ -80,10 +80,11 @@ df_res$outcome <- outcome
 library(yardstick)
 
 # calculate AUC
-df_res %>%
+df <- df_res %>%
     group_by(model) %>% 
     mutate(fitted = 1 - predictions) %>% 
     roc_auc(truth = as.factor(outcome), fitted) %>% arrange(desc(.estimate))
+df
 
 #########
 library(pROC)
@@ -95,6 +96,9 @@ df_auc <- map(ir, roc, response = outcome, predictor = predictions)
 
 names(df_auc) <- models
 
+# 95% CI 
+# map(df_auc, ci.auc)
+
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
 g.list + 
@@ -103,7 +107,7 @@ g.list +
     coord_fixed() +
     labs(col = "Model") +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
-    theme_classic()
+    theme_classic() 
 
 ############################################################  
 ############################## Brier Score #################
