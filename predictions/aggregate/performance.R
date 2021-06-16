@@ -97,7 +97,7 @@ df_auc <- map(ir, roc, response = outcome, predictor = predictions)
 names(df_auc) <- models
 
 # 95% CI 
-# map(df_auc, ci.auc)
+#map(df_auc, ci.auc)
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
