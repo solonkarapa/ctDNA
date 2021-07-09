@@ -89,8 +89,20 @@ df <- df_res %>%
 df
 
 #########
+# sensitivity at given specificity 
 library(pROC)
+df_res_ichor <- df_res %>% filter(model == "fit2_CT_ichor")
 
+set.seed(1)
+se_df_ichor <- data.frame(ci.se(outcome ~ predictions, data = df_res_ichor, specificities = seq(0.7, 0.9, by = 0.1)))
+round(se_df_ichor %>% relocate(X50.), 2)
+
+df_res_no_ichor <- df_res %>% filter(model == "fit2_CT_no_ichor")
+
+se_df_no_ichor <- data.frame(ci.se(outcome ~ predictions, data = df_res_no_ichor, specificities = seq(0.7, 0.9, by = 0.1)))
+round(se_df_no_ichor %>% relocate(X50.), 2)
+
+#########
 # put all together using pROC package 
 ir <- group_split(df_res %>% group_by(model))
 
@@ -103,7 +115,7 @@ names(df_auc) <- models
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
-# both models
+# ROC - both models
 g.list + 
     geom_line(size = 1.1) +
     geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
@@ -112,7 +124,7 @@ g.list +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
     theme_classic() 
 
-# only ichor
+# ROC - only ichor
 ggroc(df_auc[1])  + 
     geom_line(size = 1.1) +
     geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
