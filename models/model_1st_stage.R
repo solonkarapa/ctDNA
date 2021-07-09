@@ -40,7 +40,7 @@ fit1_ichor <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment
                            cores = getOption("mc.cores", 2), 
                            control = list(adapt_delta = 0.99, max_treedepth = 12))
 
-#setwd("~/Box/PhD/Code/ctDNA/updated/models/")
+setwd("~/Box/PhD/Code/ctDNA/updated/models/")
 #save(fit1_ichor, file = "model_1st_stage.Rdata")
 
 ##################################################################   

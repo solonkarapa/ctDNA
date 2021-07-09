@@ -1,4 +1,6 @@
 
+library(ggplot2)
+
 #################################################################################### 
 ######################## STEP 1 - load data and models #############################
 #################################################################################### 
@@ -101,7 +103,17 @@ names(df_auc) <- models
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
+# both models
 g.list + 
+    geom_line(size = 1.1) +
+    geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
+    coord_fixed() +
+    labs(col = "Model") +
+    scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
+    theme_classic() 
+
+# only ichor
+ggroc(df_auc[1])  + 
     geom_line(size = 1.1) +
     geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
     coord_fixed() +

@@ -96,7 +96,7 @@ df_train_ichor_ind <- df_combine_2 %>%
            time_ichor = time.x, Treatment_duration = Treatment_duration.x) %>%
     distinct(.keep_all = TRUE)
 
-#setwd("~/Box/PhD/Code/ctDNA/updated/data_split")
+setwd("~/Box/PhD/Code/ctDNA/updated/data_split")
 #save(df_train_ichor_ind, file = "data_ichor_ind.Rdata")
 
 ######## check

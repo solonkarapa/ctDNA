@@ -45,7 +45,8 @@ data_train_CT_final <- merge(data_train_CT_filtered, combine_model_1st_stage, by
 #str(data_train_CT_final)
 #length(unique(data_train_CT_final$Patient.ID)) 
 
-save(data_train_CT_final, file = "data_for_2nd_stage_with_rand_effects.Rdata")
+#setwd("~/Box/PhD/Code/ctDNA/updated/data_split")
+#save(data_train_CT_final, file = "data_for_2nd_stage_with_rand_effects.Rdata")
 
 ##################################################################   
 ################# Modelling ###################################### 

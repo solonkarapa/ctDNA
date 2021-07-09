@@ -39,7 +39,7 @@ for (i in 1:length(subject)) {
     print(m)
     
     # WITH time projection 
-    k <- paste0("~/Box/PhD/Code/ctDNA/updated/predictions/individual/output_pred_ctDNA/output_pred_", m, ".RData")
+    k <- paste0("~/Box/PhD/Code/ctDNA/updated/predictions/individual/output_pred_ctDNA_2/output_pred_", m, ".RData")
     
     load(k)
     
@@ -61,7 +61,7 @@ for (i in 1:length(subject)) {
 }
 
 # set directory where the files will be saved
-#setwd("~/Box/PhD/Code/ctDNA/updated/predictions/individual/")
+setwd("~/Box/PhD/Code/ctDNA/updated/predictions/individual/")
 #save(df_patients_final, file = "df_patients_final_projected.Rdata")
 #save(df_to_merge_plot, file = "df_to_merge_plot_projected.Rdata")
 #save(df_final, file = "df_final_projected.Rdata")

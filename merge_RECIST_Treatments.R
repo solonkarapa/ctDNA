@@ -45,7 +45,8 @@ RECIST_treatments <- df_merged %>%
 # check NA per column
 RECIST_treatments %>% ungroup() %>% summarise_all(funs(sum(is.na(.))))
 
-save(RECIST_treatments, file = "RECIST_treatments.Rdata")
+#setwd("~/Box/PhD/Code/ctDNA/updated")
+#save(RECIST_treatments, file = "RECIST_treatments.Rdata")
 
 ##########################################################################################
 ##########################################################################################

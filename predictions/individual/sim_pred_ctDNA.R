@@ -1,7 +1,7 @@
 # get array element number
 task_id_string <- Sys.getenv("SLURM_ARRAY_TASK_ID") 
 task_id <- as.numeric(task_id_string)
-task_id = 1
+#task_id = 1
 
 ########################################################################
 #################################### Step 1 ############################
@@ -154,7 +154,7 @@ post_pred_ctDNA <- posterior_epred(fit2_CT_ichor,
 output_file <- paste0("output_pred_", subject[task_id], ".Rdata")
 
 # Set the working directory to a subfolder within the current working directory
-setwd("/rds/user/sk921/hpc-work/PhD/ctDNA/updated/predictions/output_ctDNA_project_treatment") # HPC uni
+setwd("/rds/user/sk921/hpc-work/PhD/ctDNA/updated/predictions/output_ctDNA_project_treatment_2") # HPC uni
 
 save(data_new_stage1,
      #data_new_stage2,
