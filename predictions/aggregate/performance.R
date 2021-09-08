@@ -1,5 +1,6 @@
 
 library(ggplot2)
+library(dplyr)
 
 #################################################################################### 
 ######################## STEP 1 - load data and models #############################
@@ -23,7 +24,6 @@ load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_no_ichor.Rdata") # for
 #################################################################################### 
 ####################### STEP 2 - pre-process data ################################## 
 ####################################################################################
-library(dplyr)
 
 df_combine <- left_join(data_test_CT, data_train_CT_final, by = "Patient.ID")   
 

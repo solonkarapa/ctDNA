@@ -6,7 +6,8 @@
 *.Rdata
 *.RData
 data_split/*.Rdata
-# ignore fitted models 
+# ignore fitted models
 model/model_1st_stage.Rdata
 model/model_2nd_stage_ichor.Rdata
 model/model_2nd_stage_no_ichor.Rdata
+predictions/helper_funs/summary_posterior.R
