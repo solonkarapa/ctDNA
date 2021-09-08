@@ -18,7 +18,6 @@ load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effec
 # load helper fun to summarise posterior
 source("~/Box/PhD/Code/ctDNA/updated/predictions/helper_funs/summary_posterior.R")
 
-
 ##################################################################   
 ################# Load models #################################### 
 ################################################################### 
