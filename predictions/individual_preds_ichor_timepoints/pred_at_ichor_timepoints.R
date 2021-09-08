@@ -18,15 +18,16 @@ load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effec
 # load helper fun to summarise posterior
 source("~/Box/PhD/Code/ctDNA/updated/predictions/helper_funs/summary_posterior.R")
 
+
 ##################################################################   
 ################# Load models #################################### 
 ################################################################### 
 # 1st stage model
 #load("~/Box/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for mac
 
-# load stage 2 model - ichor 
+# load stage 2 model - with ichor 
 load("~/Box/PhD/Code/ctDNA/updated/models//model_2nd_stage_ichor.Rdata") # for mac
-
+#
 #################################################################################### 
 ####################### STEP 2 - pre-process data ################################## 
 ####################################################################################
