@@ -25,12 +25,11 @@ source("~/Box/PhD/Code/ctDNA/updated/predictions/helper_funs/summary_posterior.R
 #load("~/Box/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for mac
 
 # load stage 2 model - with ichor 
-load("~/Box/PhD/Code/ctDNA/updated/models//model_2nd_stage_ichor.Rdata") # for mac
+load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # for mac
 #
 #################################################################################### 
 ####################### STEP 2 - pre-process data ################################## 
 ####################################################################################
-library(dplyr)
 
 df_combine <- left_join(df_train_ichor, data_train_CT_final, by = "Patient.ID")   
 
@@ -53,6 +52,8 @@ colnames(pred_distrib_df_sum) <- c("low", "median", "high", "mean")
 
 combine_all <- cbind(df_new, pred_distrib_df_sum)
 
+#setwd("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints")
+#save(combine_all, file = "predictions_ichor_timepoints.Rdata")
 
 ###### Plot for one subject
 subj <- "DT081"
