@@ -75,6 +75,22 @@ df_res$outcome <- outcome
 #################################################################################### 
 ######################## STEP 3 - evaluate predictions (collectively) ##############
 #################################################################################### 
+#########################  CA153
+load("~/Box/PhD/Code/ctDNA/updated/DETECT_CA153.Rdata")
+
+DETECT_CA153_2 <- DETECT_CA153 %>% 
+    rename(Date = Date.CA, Patient.ID = DETECT.ID) %>% # rename cols 
+    mutate(Date = as.Date(Date, format = "%d/%m/%Y")) # fix Date format
+
+CA153 <- full_join(data_test_CT, DETECT_CA153_2, by = c("Patient.ID")) %>% 
+    group_by(Patient.ID) %>% 
+    mutate(diff_in_dates = Date.x - Date.y) %>% 
+    slice_min((abs(diff_in_dates)))
+######################## 
+library(pROC)
+CA_roc <- roc(Progression ~ Units.CA, data = CA153) # calculate stats for ichor
+CA_coord <- coords(CA_roc, 35, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+CA_coord
 
 ############################################################  
 ############################## AUC #########################
@@ -90,7 +106,6 @@ df
 
 #########
 # sensitivity at given specificity 
-library(pROC)
 df_res_ichor <- df_res %>% filter(model == "fit2_CT_ichor")
 
 set.seed(1)
@@ -122,6 +137,11 @@ g.list +
     coord_fixed() +
     labs(col = "Model") +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
+    #geom_point(x = 0.5588235, y = 0.6451613, col = "black", size = 2, shape = 13) +
+    annotate("point", x = CA_coord[[3]], y = CA_coord[[4]], colour = "black", size = 2) + 
+    #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
+    #             arrow = arrow(length = unit(0.3, "cm"))) + 
+    annotate("text", x = 0.5588235, y = 0.6, colour = "black", label = "Ca15-3", size = 5) + 
     theme_classic() 
 
 # ROC - only ichor

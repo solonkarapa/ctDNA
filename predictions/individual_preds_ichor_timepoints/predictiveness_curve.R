@@ -48,7 +48,8 @@ df_plot <- rbind(dynamic_coord, ichor_coord)
 df_plot %>%
     ggplot(.) +
     geom_point(aes(x = recall, y = precision, col = model)) +
-    geom_line(aes(x = recall, y = precision, col = model))
+    geom_line(aes(x = recall, y = precision, col = model)) +
+    geom_point(aes(x = 0.7207119, y = 0.2672791))
 
 
 
