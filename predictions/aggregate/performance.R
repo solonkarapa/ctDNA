@@ -86,6 +86,7 @@ CA153 <- full_join(data_test_CT, DETECT_CA153_2, by = c("Patient.ID")) %>%
     group_by(Patient.ID) %>% 
     mutate(diff_in_dates = Date.x - Date.y) %>% 
     slice_min((abs(diff_in_dates)))
+
 ######################## 
 library(pROC)
 CA_roc <- roc(Progression ~ Units.CA, data = CA153) # calculate stats for ichor
