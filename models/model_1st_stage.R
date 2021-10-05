@@ -43,6 +43,17 @@ fit1_ichor <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment
 setwd("~/Box/PhD/Code/ctDNA/updated/models/")
 #save(fit1_ichor, file = "model_1st_stage.Rdata")
 
+fit1_ichor_no_duration <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment_new_final +
+                      (1 + time_ichor | Patient.ID),
+                  data = df_train_ichor, 
+                  family = gaussian(), 
+                  prior = prior_custom,
+                  warmup = 2000,
+                  iter = 10000,
+                  chains = 2,
+                  cores = getOption("mc.cores", 2), 
+                  control = list(adapt_delta = 0.99, max_treedepth = 12))
+
 ##################################################################   
 ################# Post-processing ################################
 ##################################################################
@@ -141,4 +152,28 @@ summary(fit1_ichor)
 #     ggs_caterpillar(.) +
 #     geom_vline(xintercept = 0, linetype = "dashed") +
 #     theme_linedraw(12)
+
+##################################################################   
+################# Model comparison ###############################
+##################################################################
+# overall model comparison ------------
+# library(loo)
+#loo_no_treatment <- loo(fit2_CT, save_psis = TRUE, cores = 2)
+# loo_ichor <- loo(fit1_ichor, save_psis = TRUE, cores = 2)
+# loo_ichor_no_duration <- loo(fit1_ichor_no_duration, save_psis = TRUE, cores = 2)
+# 
+# # # expected out-of-sample log predictive density (ELPD) - 
+# # the more negative this difference is, the worse the model performs.
+# comprarisons_loo <- loo_compare(loo_ichor, loo_ichor_no_duration)
+# comprarisons_loo
+# 
+# models <- attributes(comprarisons_loo)$dimnames[[1]]
+# 
+# df_comparisons <- data.frame(models = models, comprarisons_loo)
+# 
+# ggplot(df_comparisons) +
+#     geom_point(aes(x = models, y = elpd_diff)) +
+#     geom_errorbar(aes(x = models, ymin = elpd_diff - se_diff, ymax = elpd_diff + se_diff), 
+#                   width = 0.2, position = position_dodge(.9)) +
+#     theme_classic()
 

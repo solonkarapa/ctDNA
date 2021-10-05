@@ -16,7 +16,7 @@ load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effec
 
 ######################### load models
 # load stage 2 model - ichor 
-load("~/Box/PhD/Code/ctDNA/updated/models//model_2nd_stage_ichor.Rdata") # for mac
+load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # for mac
 
 # load stage 2 model - no ichor
 load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_no_ichor.Rdata") # for mac
@@ -90,9 +90,10 @@ CA153 <- full_join(data_test_CT, DETECT_CA153_2, by = c("Patient.ID")) %>%
 ######################## 
 library(pROC)
 CA_roc <- roc(Progression ~ Units.CA, data = CA153) # calculate stats for ichor
-CA_coord <- coords(CA_roc, 30, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
-CA_coord
-
+CA_coord_30 <- coords(CA_roc, 30, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+CA_coord_30
+CA_coord_35 <- coords(CA_roc, 35, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+CA_coord_35
 
 #DETECT_CA153 %>% mutate(prog_new = ifelse(Units.CA >= 30, 1, 0)) %>%
 #    summarise(sum(prog_new), sum(Progression.CA == "YES"), median(Units.CA), mean(Units.CA), range(Units.CA))
@@ -135,6 +136,11 @@ names(df_auc) <- models
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
+CA_coord_30$threshold <- "30"
+CA_coord_35$threshold <- "35"
+
+CA_coord <- rbind(CA_coord_30, CA_coord_35)
+
 # ROC - both models
 g.list + 
     geom_line(size = 1.1) +
@@ -142,11 +148,13 @@ g.list +
     coord_fixed() +
     labs(col = "Model") +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
-    #geom_point(x = 0.5588235, y = 0.6451613, col = "black", size = 2, shape = 13) +
-    annotate("point", x = CA_coord[[3]], y = CA_coord[[4]], colour = "black", size = 2) + 
+    geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2, inherit.aes = FALSE) +
+    labs(shape = "CA 15-3 threshold") +
+    #annotate("point", x = CA_coord_30[[3]], y = CA_coord_30[[4]], colour = "black", size = 2) + 
+    #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
-    annotate("text", x = 0.5588235, y = 0.6, colour = "black", label = "Ca15-3", size = 5) + 
+    #annotate("text", x = 0.5588235, y = 0.6, colour = "black", label = "Ca15-3", size = 5) + 
     theme_classic() 
 
 # ROC - only ichor
