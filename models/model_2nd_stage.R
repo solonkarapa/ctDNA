@@ -48,6 +48,13 @@ data_train_CT_final <- merge(data_train_CT_filtered, combine_model_1st_stage, by
 #setwd("~/Box/PhD/Code/ctDNA/updated/data_split")
 #save(data_train_CT_final, file = "data_for_2nd_stage_with_rand_effects.Rdata")
 
+# dataset sum stats
+#load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effects.Rdata")
+
+#data_train_CT_final %>% summarise(number_of_patients = length(unique(Patient.ID)),
+#                                  total_scans = n(),
+#                                  unique_treatment = length(unique(Treatment_new_final)))
+
 ##################################################################   
 ################# Modelling ###################################### 
 ##################################################################

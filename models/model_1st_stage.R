@@ -10,11 +10,13 @@ library(dplyr)
 # should be 143 patients
 #df_train_ichor %>% summarise(n()) %>% arrange(`n()`)
 #df_train_ichor %>% ungroup %>% summarise(range(time_ichor))
+#df_train_ichor %>% ungroup %>% summarise(total_ichor = n()) 
 
 # check NA per column
 #df_train_ichor %>% ungroup() %>% summarise_all(funs(sum(is.na(.))))
 #index_missing <- which(is.na(df_train_ichor$Her2.status))
 #df_train_ichor[index_missing,]
+
 
 ##################################################################   
 ################# Modelling ###################################### 

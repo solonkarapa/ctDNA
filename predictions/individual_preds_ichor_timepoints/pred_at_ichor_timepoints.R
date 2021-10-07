@@ -55,6 +55,8 @@ combine_all <- cbind(df_new, pred_distrib_df_sum)
 #setwd("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints")
 #save(combine_all, file = "predictions_ichor_timepoints.Rdata")
 
+load("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints/predictions_ichor_timepoints.Rdata")
+
 ###### Plot for one subject
 subj <- "DT081"
 
