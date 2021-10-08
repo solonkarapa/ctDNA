@@ -1,7 +1,7 @@
 # get array element number
 task_id_string <- Sys.getenv("SLURM_ARRAY_TASK_ID") 
 task_id <- as.numeric(task_id_string)
-#task_id = 1
+#task_id = 2
 
 ########################################################################
 #################################### Step 1 ############################
