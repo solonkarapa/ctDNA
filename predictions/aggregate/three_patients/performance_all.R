@@ -19,6 +19,7 @@ dim(last_CT_three_pat)[1]
 
 df_all_pat <- rbind(last_CT_three_pat, data_test_CT)
 
+
 ######################### load train data
 load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effects.Rdata")
 
@@ -34,6 +35,9 @@ load("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints
 df_final2 <- df_final %>% select(colnames(data_train_CT_final2))
 
 data_CT_all <- rbind(df_final, data_train_CT_final2)
+
+# summary stats
+data_CT_all %>% group_by(Patient.ID) %>% summarise(uniq_pat = unique(Treatment_new_final))
 
 ######################### load models
 # load stage 2 model - ichor 
@@ -156,7 +160,7 @@ no_ichor <- se_df_no_ichor %>%
 sens_models <- rbind(ichor, no_ichor)
 sens_models
 
-save(spec_models, file = "sens_models.Rdata")
+#save(spec_models, file = "sens_models.Rdata")
 
 #########
 # put all together using pROC package 
@@ -168,6 +172,10 @@ names(df_auc) <- models
 
 # 95% CI 
 # map(df_auc, ci.auc)
+
+# best threshold 
+best_threshold <- coords(df_auc$fit2_CT_ichor, "best")
+coords(df_auc$fit2_CT_no_ichor, "best")
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
@@ -185,7 +193,7 @@ g.list +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
     geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2, inherit.aes = FALSE) +
     labs(shape = "CA 15-3 threshold") +
-    #annotate("point", x = CA_coord_30[[3]], y = CA_coord_30[[4]], colour = "black", size = 2) + 
+    annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 3, shape = "square") + 
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
