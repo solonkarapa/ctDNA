@@ -180,12 +180,13 @@ names(df_auc) <- models
 
 # best threshold 
 best_criterion <- "youden"
-best_threshold <- coords(df_auc$fit2_CT_ichor, x = "best", best.method = best_criterion)
+best_threshold <- coords(df_auc$fit2_CT_ichor, x = "best", best.method = best_criterion)# best.weights = c(2, 0.5))
 best_threshold
 
 all <- coords(df_auc$fit2_CT_ichor)
 local_maximas <- coords(df_auc$fit2_CT_ichor, x = "local maximas")
 local_maximas
+
 
 #save(local_maximas, file = "local_maxima_ROC_ichor_model.Rdata")
 
