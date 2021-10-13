@@ -182,7 +182,15 @@ names(df_auc) <- models
 best_criterion <- "youden"
 best_threshold <- coords(df_auc$fit2_CT_ichor, x = "best", best.method = best_criterion)
 best_threshold
-coords(df_auc$fit2_CT_no_ichor, x = "best", best.method = best_criterion)
+
+all <- coords(df_auc$fit2_CT_ichor)
+local_maximas <- coords(df_auc$fit2_CT_ichor, x = "local maximas")
+local_maximas
+
+#save(local_maximas, file = "local_maxima_ROC_ichor_model.Rdata")
+
+# list of thresholds
+coords(df_auc$fit2_CT_ichor, x = "best", best.method = best_criterion)
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
@@ -203,6 +211,22 @@ g.list +
     geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2.5, inherit.aes = FALSE) +
     labs(shape = "CA 15-3 threshold") +
     annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
+    #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
+    #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
+    #             arrow = arrow(length = unit(0.3, "cm"))) + 
+    #annotate("text", x = 0.5588235, y = 0.6, colour = "black", label = "Ca15-3", size = 5) + 
+    theme_classic() 
+
+g.list + 
+    geom_line(size = 1.1) +
+    geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
+    coord_fixed() +
+    labs(col = "Model") +
+    scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
+    geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2.5, inherit.aes = FALSE) +
+    labs(shape = "CA 15-3 threshold") +
+    geom_point(data = local_maximas, aes(x = specificity, y = sensitivity), inherit.aes = FALSE) +
+    #annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
