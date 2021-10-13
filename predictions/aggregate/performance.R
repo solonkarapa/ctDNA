@@ -90,10 +90,12 @@ CA153 <- full_join(data_test_CT, DETECT_CA153_2, by = c("Patient.ID")) %>%
 ######################## 
 library(pROC)
 CA_roc <- roc(Progression ~ Units.CA, data = CA153) # calculate stats for ichor
-CA_coord_30 <- coords(CA_roc, 30, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
-CA_coord_30
-CA_coord_35 <- coords(CA_roc, 35, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
-CA_coord_35
+#CA_coord_30 <- coords(CA_roc, 30, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+#CA_coord_30
+#CA_coord_35 <- coords(CA_roc, 35, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+#CA_coord_35
+CA_coord_31 <- coords(CA_roc, 31, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+CA_coord_31
 
 #DETECT_CA153 %>% mutate(prog_new = ifelse(Units.CA >= 30, 1, 0)) %>%
 #    summarise(sum(prog_new), sum(Progression.CA == "YES"), median(Units.CA), mean(Units.CA), range(Units.CA))

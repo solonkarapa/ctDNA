@@ -1,14 +1,16 @@
 library(ggplot2)
 library(dplyr)
 
+path <- "/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/"
+
 #################################################################################### 
 ######################## STEP 1 - load data and models #############################
 #################################################################################### 
 ######################### load test data 
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_test_CT.Rdata")
+load(paste0(path, "data_split/data_test_CT.Rdata"))
 
 # load CT dataset - three patients
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_dynamic_pred_CT.Rdata") # updated dataset mac
+load(paste0(path, "data_split/data_dynamic_pred_CT.Rdata")) # updated dataset mac
 
 # keep last CT scan per patient
 last_CT_three_pat <- data_ind_pat_CT %>% group_by(Patient.ID) %>% slice_max(time)
@@ -21,7 +23,7 @@ df_all_pat <- rbind(last_CT_three_pat, data_test_CT)
 
 
 ######################### load train data
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effects.Rdata")
+load(paste0(path, "data_split/data_for_2nd_stage_with_rand_effects.Rdata"))
 
 # remove problematic cols
 data_train_CT_final2 <- data_train_CT_final %>% 
@@ -29,7 +31,7 @@ data_train_CT_final2 <- data_train_CT_final %>%
                select(-c(Date, Progression))
 
 ######################### load train data three patients 
-load("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints/three_patients/df_final_ichor_timepoints_three_pat.Rdata")
+load(paste0(path, "predictions/individual_preds_ichor_timepoints/three_patients/df_final_ichor_timepoints_three_pat.Rdata"))
 
 # same col names 
 df_final2 <- df_final %>% select(colnames(data_train_CT_final2))
@@ -41,10 +43,10 @@ data_CT_all %>% group_by(Patient.ID) %>% summarise(uniq_pat = unique(Treatment_n
 
 ######################### load models
 # load stage 2 model - ichor 
-load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # for mac
+load(paste0(path, "models/model_2nd_stage_ichor.Rdata")) # for mac
 
 # load stage 2 model - no ichor
-load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_no_ichor.Rdata") # for mac
+load(paste0(path, "models/model_2nd_stage_no_ichor.Rdata")) # for mac
 
 #################################################################################### 
 ####################### STEP 2 - pre-process data ################################## 
@@ -100,7 +102,7 @@ df_res$outcome <- outcome
 ######################## STEP 3 - evaluate predictions (collectively) ##############
 #################################################################################### 
 #########################  CA153
-load("~/Box/PhD/Code/ctDNA/updated/DETECT_CA153.Rdata")
+load(paste0(path, "DETECT_CA153.Rdata"))
 
 DETECT_CA153_2 <- DETECT_CA153 %>% 
     rename(Date = Date.CA, Patient.ID = DETECT.ID) %>% # rename cols 
@@ -114,10 +116,13 @@ CA153 <- full_join(data_test_CT, DETECT_CA153_2, by = c("Patient.ID")) %>%
 ######################## 
 library(pROC)
 CA_roc <- roc(Progression ~ Units.CA, data = CA153) # calculate stats for ichor
-CA_coord_30 <- coords(CA_roc, 30, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
-CA_coord_30
-CA_coord_35 <- coords(CA_roc, 35, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
-CA_coord_35
+#CA_coord_30 <- coords(CA_roc, 30, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+#CA_coord_30
+#CA_coord_35 <- coords(CA_roc, 35, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+#CA_coord_35
+
+CA_coord_31 <- coords(CA_roc, 31, input = "threshold", ret = c("precision", "recall", "specificity", "sensitivity"))
+CA_coord_31
 
 #DETECT_CA153 %>% mutate(prog_new = ifelse(Units.CA >= 30, 1, 0)) %>%
 #    summarise(sum(prog_new), sum(Progression.CA == "YES"), median(Units.CA), mean(Units.CA), range(Units.CA))
@@ -174,15 +179,19 @@ names(df_auc) <- models
 # map(df_auc, ci.auc)
 
 # best threshold 
-best_threshold <- coords(df_auc$fit2_CT_ichor, "best")
-coords(df_auc$fit2_CT_no_ichor, "best")
+best_criterion <- "youden"
+best_threshold <- coords(df_auc$fit2_CT_ichor, x = "best", best.method = best_criterion)
+best_threshold
+coords(df_auc$fit2_CT_no_ichor, x = "best", best.method = best_criterion)
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
-CA_coord_30$threshold <- "30"
-CA_coord_35$threshold <- "35"
+#CA_coord_30$threshold <- "30"
+#CA_coord_35$threshold <- "35"
+CA_coord_31$threshold <- "31"
 
-CA_coord <- rbind(CA_coord_30, CA_coord_35)
+#CA_coord <- rbind(CA_coord_30, CA_coord_35)
+CA_coord <- rbind(CA_coord_31)
 
 # ROC - both models
 g.list + 
@@ -191,9 +200,9 @@ g.list +
     coord_fixed() +
     labs(col = "Model") +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
-    geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2, inherit.aes = FALSE) +
+    geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2.5, inherit.aes = FALSE) +
     labs(shape = "CA 15-3 threshold") +
-    annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 3, shape = "square") + 
+    annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
