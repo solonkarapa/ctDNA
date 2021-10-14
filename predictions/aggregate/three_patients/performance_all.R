@@ -187,6 +187,7 @@ all <- coords(df_auc$fit2_CT_ichor)
 local_maximas <- coords(df_auc$fit2_CT_ichor, x = "local maximas")
 local_maximas
 
+chosen_threshold <- local_maximas[12,]
 
 #save(local_maximas, file = "local_maxima_ROC_ichor_model.Rdata")
 
@@ -211,7 +212,8 @@ g.list +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
     geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2.5, inherit.aes = FALSE) +
     labs(shape = "CA 15-3 threshold") +
-    annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
+    #annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
+    geom_point(data = chosen_threshold, aes(x = specificity, y = sensitivity), colour = "black", size = 2.5, shape = "square") + 
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 

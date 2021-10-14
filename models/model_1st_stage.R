@@ -1,8 +1,10 @@
 
+main_path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+
 ##################################################################   
 ########################## Load data #############################
 ##################################################################   
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_train_ichor.Rdata") # train IchorCNA dataset
+load(paste0(main_path, "data_split/data_train_ichor.Rdata")) # train IchorCNA dataset
 
 library(dplyr)
 
@@ -63,12 +65,15 @@ fit1_ichor_no_duration <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status
 #p <- as.mcmc(fit1_ichor)
 #summary(p) # check time-series SE col
 
+# load fitted model
+load(paste0(main_path,"models/model_1st_stage.Rdata"))
+
 # reporting Latex
 #library(xtable)
 #str(summary(fit1_ichor))
-#xtable(summary(fit1_ichor)$fixed[,1:4])
+#xtable(summary(fit1_ichor)$fixed[,c(1, 3, 4)])
 #xtable(summary(fit1_ichor)$spec_pars)
-#xtable(summary(fit1_ichor)$random$Patient.ID[,1:4])
+#xtable(summary(fit1_ichor)$random$Patient.ID[,c(1, 3, 4)])
 
 ################################ diagnostics, summaries, plots
 # summarise output

@@ -1,12 +1,17 @@
 
+main_path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
 
 ##################################################################   
 ########################## Load files ############################
 ################################################################## 
 # data
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_train_CT.Rdata") # train CT dataset
+load(paste0(main_path, "data_split/data_train_CT.Rdata")) # train CT dataset
 
 #load("~/Box/PhD/Code/ctDNA/updated/data_split/data_dynamic_pred_CT.Rdata") # train CT dataset
+
+# exploratory
+# should be 146 patients
+#data_train_CT %>% summarise(n()) %>% arrange(`n()`)
 
 # 1st stage model
 load("~/Box/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for mac
@@ -95,11 +100,15 @@ fit2_CT_no_ichor <- brm(Progression ~ time + ER.status + Her2.status + Treatment
 #save(fit2_CT_ichor, file = "model_2nd_stage_ichor.Rdata")
 #save(fit2_CT_no_ichor, file = "model_2nd_stage_no_ichor.Rdata")
 
+# load fitted model
+load("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata")
+
 # reporting Latex
 #library(xtable)
 #str(summary(fit2_CT_ichor))
-#xtable(summary(fit2_CT_ichor)$fixed[,1:4])
-#xtable(summary(fit2_CT_ichor)$spec_pars)
+#xtable(summary(fit2_CT_ichor)$fixed[,c(1, 3, 4)])
+#xtable(summary(fit2_CT_ichor)$spec_pars[,c(1, 3, 4)])
+#xtable(summary(fit2_CT_ichor)$random$Patient.ID)
 
 ##################################################################   
 ################# Post-processing ################################
