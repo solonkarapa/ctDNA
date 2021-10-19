@@ -141,7 +141,7 @@ ichorCNA_threshold <- roc(Progression.y ~ StoppingRule, data = df_rule_prelim)
 ichor_thr_sens <- ichorCNA_threshold$sensitivities[2]
 ichor_thr_spec <- ichorCNA_threshold$specificities[2]
 
-df_ichor_threshold <- data.frame(sens = ichor_thr_sens, spec = ichor_thr_spec)
+df_ichor_threshold <- data.frame(sens = ichor_thr_sens, spec = ichor_thr_spec, model = "Threshold model")
 
 ############################################################  
 ############################## AUC #########################
@@ -214,7 +214,7 @@ g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
 #CA_coord_30$threshold <- "30"
 #CA_coord_35$threshold <- "35"
-CA_coord_31$threshold <- "31"
+CA_coord_31$threshold <- "CA 15-3 threshold 31"
 
 #CA_coord <- rbind(CA_coord_30, CA_coord_35)
 CA_coord <- rbind(CA_coord_31)
@@ -227,10 +227,10 @@ g.list +
     labs(col = "Model") +
     scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
     geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2.5, inherit.aes = FALSE) +
-    labs(shape = "CA 15-3 threshold") +
+    labs(shape = "") +
     #annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
     geom_point(data = chosen_threshold, aes(x = specificity, y = sensitivity), colour = "black", size = 2.5, shape = "square") + 
-    geom_point(data = df_ichor_threshold, aes(x = spec, y = sens), colour = "black", size = 2.5, shape = "triangle") +
+    geom_point(data = df_ichor_threshold, aes(x = spec, y = sens, shape = model), colour = "black", size = 2.5) +
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
