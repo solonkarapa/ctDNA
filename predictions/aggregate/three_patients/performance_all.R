@@ -21,7 +21,6 @@ dim(last_CT_three_pat)[1]
 
 df_all_pat <- rbind(last_CT_three_pat, data_test_CT)
 
-
 ######################### load train data
 load(paste0(path, "data_split/data_for_2nd_stage_with_rand_effects.Rdata"))
 
@@ -127,6 +126,23 @@ CA_coord_31
 #DETECT_CA153 %>% mutate(prog_new = ifelse(Units.CA >= 30, 1, 0)) %>%
 #    summarise(sum(prog_new), sum(Progression.CA == "YES"), median(Units.CA), mean(Units.CA), range(Units.CA))
 
+######################### ichorCNA threshold predictions
+ThresholdPredictions <- read.delim(paste0(path, "ThresholdPredictions.txt"), header=T)
+
+ThresholdPredictions2 <- ThresholdPredictions %>% 
+    mutate(Date.SCAN = as.Date(Date.SCAN)) %>% 
+    group_by(Patient.ID) %>% 
+    slice_max(Date.SCAN) # get most recent measurement 
+
+df_rule_prelim <- merge(df_all_pat, ThresholdPredictions2, by = "Patient.ID")
+
+ichorCNA_threshold <- roc(Progression.y ~ StoppingRule, data = df_rule_prelim) 
+
+ichor_thr_sens <- ichorCNA_threshold$sensitivities[2]
+ichor_thr_spec <- ichorCNA_threshold$specificities[2]
+
+df_ichor_threshold <- data.frame(sens = ichor_thr_sens, spec = ichor_thr_spec)
+
 ############################################################  
 ############################## AUC #########################
 ############################################################
@@ -214,6 +230,7 @@ g.list +
     labs(shape = "CA 15-3 threshold") +
     #annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
     geom_point(data = chosen_threshold, aes(x = specificity, y = sensitivity), colour = "black", size = 2.5, shape = "square") + 
+    geom_point(data = df_ichor_threshold, aes(x = spec, y = sens), colour = "black", size = 2.5, shape = "triangle") +
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
