@@ -1,7 +1,9 @@
 
 # load data files
-load("~/Box/PhD/Code/ctDNA/updated/pre_process_RECIST.Rdata") # RECIST formatted
-load("~/Box/PhD/Code/ctDNA/updated/treatments_simplified.Rdata") # Treatments BASE-simplified - New file
+path <- "/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated"
+
+load(paste0(path, "/pre_process_RECIST.Rdata")) # RECIST formated
+load(paste0(path, "/treatments_simplified.Rdata")) # Treatments BASE-simplified - New file
 
 library(dplyr)
 
@@ -45,7 +47,7 @@ RECIST_treatments <- df_merged %>%
 # check NA per column
 RECIST_treatments %>% ungroup() %>% summarise_all(funs(sum(is.na(.))))
 
-#setwd("~/Box/PhD/Code/ctDNA/updated")
+#setwd(path)
 #save(RECIST_treatments, file = "RECIST_treatments.Rdata")
 
 ##########################################################################################

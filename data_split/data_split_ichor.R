@@ -9,7 +9,7 @@ library(dplyr)
 ########################## IchorCNA ##############################
 ################################################################## 
 # load ichor dataset
-load("~/Box/PhD/Code/ctDNA/updated/ichorCNA_Treatments.Rdata") # updated dataset
+load("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/ichorCNA_Treatments.Rdata") # updated dataset
 
 # time unit conversion
 # https://www.datasciencemadesimple.com/get-difference-between-two-dates-in-r-by-days-weeks-months-and-years-r-2/

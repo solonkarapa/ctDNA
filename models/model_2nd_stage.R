@@ -14,7 +14,7 @@ load(paste0(main_path, "data_split/data_train_CT.Rdata")) # train CT dataset
 #data_train_CT %>% summarise(n()) %>% arrange(`n()`)
 
 # 1st stage model
-load("~/Box/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for mac
+load(paste0(main_path, "models/model_1st_stage.Rdata")) # for mac
 
 library(dplyr)
 
@@ -50,7 +50,7 @@ data_train_CT_final <- merge(data_train_CT_filtered, combine_model_1st_stage, by
 #str(data_train_CT_final)
 #length(unique(data_train_CT_final$Patient.ID)) 
 
-#setwd("~/Box/PhD/Code/ctDNA/updated/data_split")
+#setwd(paste0(main_path, "data_split"))
 #save(data_train_CT_final, file = "data_for_2nd_stage_with_rand_effects.Rdata")
 
 # dataset sum stats
@@ -72,8 +72,7 @@ library(brms)
 prior_custom <- c(set_prior("normal(0, 100)", class = "b"), # fixed effects prior 
                   set_prior("cauchy(0, 2)", class = "sd"))
 
-fit2_CT_ichor <- brm(Progression ~ time + ER.status + Her2.status + 
-                             Treatment_new_final + estim_inter + estim_slope + (1 | Patient.ID),
+fit2_CT_ichor <- brm(Progression ~ time + ER.status + Her2.status + Treatment_new_final + estim_inter + estim_slope + (1 | Patient.ID),
                          data = data_train_CT_final, 
                          family = bernoulli(link = "logit"), 
                          prior = prior_custom,
@@ -94,14 +93,14 @@ fit2_CT_no_ichor <- brm(Progression ~ time + ER.status + Her2.status + Treatment
                         control = list(adapt_delta = 0.95, max_treedepth = 12))
 
 ############################
-#setwd("~/Box/PhD/Code/ctDNA/updated/models")
+setwd(paste0(main_path, "models"))
 
 # models to save
 #save(fit2_CT_ichor, file = "model_2nd_stage_ichor.Rdata")
 #save(fit2_CT_no_ichor, file = "model_2nd_stage_no_ichor.Rdata")
 
 # load fitted model
-load("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata")
+load(paste0(main_path, "models/model_2nd_stage_ichor.Rdata"))
 
 # reporting Latex
 #library(xtable)
@@ -118,7 +117,7 @@ load("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/models/mod
 #summary(p)
 
 summary(fit2_CT_ichor)
-summary(fit2_CT_no_ichor)
+#summary(fit2_CT_no_ichor)
 
 #plot(fit2_CT_ichor)
 #plot(fit2_CT_no_ichor)

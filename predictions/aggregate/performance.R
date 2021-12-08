@@ -1,4 +1,8 @@
 
+
+######################### see three patients file
+
+
 library(ggplot2)
 library(dplyr)
 
@@ -6,20 +10,22 @@ library(dplyr)
 ######################## STEP 1 - load data and models #############################
 #################################################################################### 
 ######################### load test data 
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_test_CT.Rdata")
+path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+
+load(paste0(path, "data_split/data_test_CT.Rdata"))
 
 # number of patients
 dim(data_test_CT)[1]
 
 ######################### load train data
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effects.Rdata")
+load(paste0(path, "data_split/data_for_2nd_stage_with_rand_effects.Rdata"))
 
 ######################### load models
 # load stage 2 model - ichor 
-load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # for mac
+load(paste0(path, "models/model_2nd_stage_ichor.Rdata")) # for mac
 
 # load stage 2 model - no ichor
-load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_no_ichor.Rdata") # for mac
+load(paste0(path, "models/model_2nd_stage_no_ichor.Rdata")) # for mac
 
 #################################################################################### 
 ####################### STEP 2 - pre-process data ################################## 
@@ -76,7 +82,7 @@ df_res$outcome <- outcome
 ######################## STEP 3 - evaluate predictions (collectively) ##############
 #################################################################################### 
 #########################  CA153
-load("~/Box/PhD/Code/ctDNA/updated/DETECT_CA153.Rdata")
+load(paste0(path, "DETECT_CA153.Rdata"))
 
 DETECT_CA153_2 <- DETECT_CA153 %>% 
     rename(Date = Date.CA, Patient.ID = DETECT.ID) %>% # rename cols 
@@ -138,10 +144,11 @@ names(df_auc) <- models
 
 g.list <- ggroc(df_auc)  # see https://rdrr.io/cran/pROC/man/ggroc.html
 
-CA_coord_30$threshold <- "30"
-CA_coord_35$threshold <- "35"
+#CA_coord_30$threshold <- "30"
+#CA_coord_35$threshold <- "35"
+CA_coord_31$threshold <- "31"
 
-CA_coord <- rbind(CA_coord_30, CA_coord_35)
+CA_coord <- rbind(CA_coord_31)
 
 # ROC - both models
 g.list + 

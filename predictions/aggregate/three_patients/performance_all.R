@@ -149,11 +149,13 @@ df_ichor_threshold <- data.frame(sens = ichor_thr_sens, spec = ichor_thr_spec, m
 library(yardstick)
 
 # calculate AUC
-df <- df_res %>%
+df_average_AUC <- df_res %>%
     group_by(model) %>% 
     mutate(fitted = 1 - predictions) %>% 
     roc_auc(truth = as.factor(outcome), fitted) %>% arrange(desc(.estimate))
-df
+df_average_AUC
+
+#save(df_average_AUC, file = "average_AUC.Rdata")
 
 #########
 # sensitivity at given specificity 
@@ -181,7 +183,8 @@ no_ichor <- se_df_no_ichor %>%
 sens_models <- rbind(ichor, no_ichor)
 sens_models
 
-#save(spec_models, file = "sens_models.Rdata")
+#setwd("~/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/predictions/aggregate/")
+#save(sens_models, file = "sens_models.Rdata")
 
 #########
 # put all together using pROC package 

@@ -2,7 +2,7 @@
 library(dplyr)
 
 ### load ichorCNA data
-load("~/Box/PhD/Code/ctDNA/DETECT.MODEL.FILES.RData") # 2nd UPDATED DATASET
+load("~/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/DETECT.MODEL.FILES.RData") # 2nd UPDATED DATASET
 
 # check NA per column
 ichorCNA %>% summarise_all(funs(sum(is.na(.))))

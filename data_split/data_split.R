@@ -9,7 +9,9 @@
 library(dplyr)
 
 ################ load data
-load("~/Box/PhD/Code/ctDNA/updated/RECIST_Treatments.Rdata") # for mac
+path <- "/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated"
+
+load(paste0(path, "/RECIST_Treatments.Rdata")) # for mac
 
 ################ 
 # transformations and select cols
@@ -53,7 +55,7 @@ data_test_CT <- data_excluded_ind_pat %>%
 data_train_CT <- data_excluded_ind_pat %>% 
     anti_join(data_test_CT, by = c("Date", "Patient.ID"), copy = T) 
 
-setwd("~/Box/PhD/Code/ctDNA/updated/data_split")
+setwd(paste0(path, "/data_split"))
 #save(data_train_CT, file = "data_train_CT.Rdata")
 #save(data_test_CT, file = "data_test_CT.Rdata")
 #save(data_ind_pat_CT, file = "data_dynamic_pred_CT.Rdata")
