@@ -10,7 +10,9 @@ library(dplyr)
 ############################################ 
 ############################################ 
 # load data
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_ichor_ind.Rdata") # updated dataset mac
+main_path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+
+load(paste0(main_path, "data_split/data_ichor_ind.Rdata")) # updated dataset mac
 
 subject <- unique(df_train_ichor_ind$Patient.ID)
 
@@ -20,7 +22,7 @@ subject
 ############################################ 
 ############################################ 
 # load helper fun to summarise posterior
-source("~/Box/PhD/Code/ctDNA/updated/predictions/helper_funs/summary_posterior.R")
+source(paste0(main_path, "predictions/helper_funs/summary_posterior.R"))
 
 # specify the quantiles of the posterior
 quantiles = c(0.05, 0.5, 0.95)
@@ -39,7 +41,7 @@ for (i in 1:length(subject)) {
     print(m)
     
     #
-    k <- paste0("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints/three_patients/output_pred_ichor_timepoints_three_patients/output_pred_", m, ".RData")
+    k <- paste0(main_path, "predictions/individual_preds_ichor_timepoints/three_patients/output_pred_ichor_timepoints_three_patients/output_pred_", m, ".RData")
     
     load(k)
     
@@ -61,7 +63,7 @@ for (i in 1:length(subject)) {
 }
 
 # set directory where the files will be saved
-setwd("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints/three_patients")
+setwd(paste0(main_path, "predictions/individual_preds_ichor_timepoints/three_patients"))
 #save(df_patients_final, file = "df_patients_final_projected.Rdata")
 #save(df_to_merge_plot, file = "df_to_merge_plot_projected.Rdata")
 #save(df_final, file = "df_final_ichor_timepoints_three_pat.Rdata")

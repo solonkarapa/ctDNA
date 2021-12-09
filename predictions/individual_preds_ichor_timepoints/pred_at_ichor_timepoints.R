@@ -8,15 +8,17 @@ library(ggnewscale)
 ########################## Load data #############################
 ##################################################################  
 
+main_path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+    
 # training data with ichor 
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_train_ichor.Rdata") # train IchorCNA dataset
+load(paste0(main_path, "data_split/data_train_ichor.Rdata")) # train IchorCNA dataset
 
 ######################### load train data used in 2nd stage model
-load("~/Box/PhD/Code/ctDNA/updated/data_split/data_for_2nd_stage_with_rand_effects.Rdata")
+load(paste0(main_path,"data_split/data_for_2nd_stage_with_rand_effects.Rdata"))
 
 ############################################ 
 # load helper fun to summarise posterior
-source("~/Box/PhD/Code/ctDNA/updated/predictions/helper_funs/summary_posterior.R")
+source(paste0(main_path, "predictions/helper_funs/summary_posterior.R"))
 
 ##################################################################   
 ################# Load models #################################### 
@@ -25,8 +27,8 @@ source("~/Box/PhD/Code/ctDNA/updated/predictions/helper_funs/summary_posterior.R
 #load("~/Box/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for mac
 
 # load stage 2 model - with ichor 
-load("~/Box/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # for mac
-#
+load(paste0(main_path, "models/model_2nd_stage_ichor.Rdata")) # for mac
+
 #################################################################################### 
 ####################### STEP 2 - pre-process data ################################## 
 ####################################################################################
@@ -52,10 +54,10 @@ colnames(pred_distrib_df_sum) <- c("low", "median", "high", "mean")
 
 combine_all <- cbind(df_new, pred_distrib_df_sum)
 
-#setwd("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints")
+#setwd(paste0(main_path, "predictions/individual_preds_ichor_timepoints"))
 #save(combine_all, file = "predictions_ichor_timepoints.Rdata")
 
-load("~/Box/PhD/Code/ctDNA/updated/predictions/individual_preds_ichor_timepoints/predictions_ichor_timepoints.Rdata")
+load(paste0(main_path, "predictions/individual_preds_ichor_timepoints/predictions_ichor_timepoints.Rdata"))
 
 ###### Plot for one subject
 subj <- "DT081"
