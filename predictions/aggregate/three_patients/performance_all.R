@@ -127,7 +127,9 @@ CA_coord_31
 #    summarise(sum(prog_new), sum(Progression.CA == "YES"), median(Units.CA), mean(Units.CA), range(Units.CA))
 
 ######################### ichorCNA threshold predictions
-ThresholdPredictions <- read.delim(paste0(path, "ThresholdPredictions.txt"), header=T)
+ThresholdPredictions <- read.delim(paste0(path, "ThresholdPredictions.txt"), header = T)
+
+unique(ThresholdPredictions$Patient.ID)
 
 ThresholdPredictions2 <- ThresholdPredictions %>% 
     mutate(Date.SCAN = as.Date(Date.SCAN)) %>% 
@@ -136,12 +138,18 @@ ThresholdPredictions2 <- ThresholdPredictions %>%
 
 df_rule_prelim <- merge(df_all_pat, ThresholdPredictions2, by = "Patient.ID")
 
+length(unique(df_rule_prelim$Patient.ID))
+
 ichorCNA_threshold <- roc(Progression.y ~ StoppingRule, data = df_rule_prelim) 
+
+df_rule_prelim %>% select(Progression.y, StoppingRule)
 
 ichor_thr_sens <- ichorCNA_threshold$sensitivities[2]
 ichor_thr_spec <- ichorCNA_threshold$specificities[2]
 
 df_ichor_threshold <- data.frame(sens = ichor_thr_sens, spec = ichor_thr_spec, model = "Threshold model")
+
+ichorCNA_threshold$cases
 
 ############################################################  
 ############################## AUC #########################
@@ -260,32 +268,59 @@ g.list +
 ############ confusion matrix 
 stats <- c("tp", "fp", "tn", "fn")
 confusion_ichor <- coords(df_auc$fit2_CT_ichor, x = chosen_threshold$threshold, input = "threshold", ret = stats)
-confusion_ichor$model <- "with ctDNA"
+confusion_ichor$model <- "BAY with ctDNA"
+confusion_ichor <- confusion_ichor %>% mutate(total = tp + fp + tn + fn, 
+                           tp = (tp/total)*100, 
+                           fp = (fp/total)*100,
+                           tn = (tn/total)*100,
+                           fn = (fn/total)*100) %>%
+    select(-total)
 confusion_no_ichor <- coords(df_auc$fit2_CT_no_ichor, x = chosen_threshold$threshold, input = "threshold", ret = stats)
-confusion_no_ichor$model <- "without ctDNA"
+confusion_no_ichor$model <- "BAY without ctDNA"
+confusion_no_ichor <- confusion_no_ichor %>% mutate(total = tp + fp + tn + fn, 
+                                              tp = (tp/total)*100, 
+                                              fp = (fp/total)*100,
+                                              tn = (tn/total)*100,
+                                              fn = (fn/total)*100) %>%
+    select(-total)
 
-confusion_res <- rbind(confusion_ichor, confusion_no_ichor)
-colnames(confusion_res) <- c("True Positives", "False Positives", "True Negatives", "False Negatives", "model")
+library(caret)
+Progression_conf <- ifelse(df_rule_prelim$Progression.y == "YES", 1, 0)
+confusion_threshold <- confusionMatrix(factor(df_rule_prelim_conf$StoppingRule), reference = factor(Progression_conf), positive = "1")
 
 library(tidyr)
+confusion_threshold <- data.frame(confusion_threshold$table/nrow(df_rule_prelim)*100) %>% 
+    mutate(preds = ifelse(Prediction == 0 & Reference == 0, "tn", 
+                          ifelse(Prediction == 1 & Reference == 0, "fp",
+                                 ifelse(Prediction == 0 & Reference == 1, "fn", "tp")))) %>%
+    select(Freq, preds) %>%
+    spread(preds, Freq) %>%
+    mutate(model = "Threshold model")
+
+# 
+confusion_res <- rbind(confusion_ichor, confusion_no_ichor, confusion_threshold)
+colnames(confusion_res) <- c("True Positives", "False Positives", "True Negatives", "False Negatives", "model")
+# 
+# library(tidyr)
 data_long <- gather(confusion_res, stats, res, "True Positives":"False Negatives", factor_key = T)
 data_long <-  data_long %>%
-    mutate(stats = factor(stats, levels = c("True Positives", "True Negatives", "False Negatives", "False Positives")))
-
+    mutate(stats = factor(stats, levels = c("True Positives", "True Negatives", "False Negatives", "False Positives"))) %>%
+    mutate(res = round(res, 0))
+# 
 library(plyr)
 df_sorted <- plyr::arrange(data_long, model, stats) 
 df_cumsum <- plyr::ddply(df_sorted, c("model"),
-                   transform, label_ypos = 129 - cumsum(res) + 0.5* res)
+                    transform, label_ypos = 100 - cumsum(res) + 0.5* res)
 df_cumsum
-
+# 
 library(ggrepel)
 ggplot(data = df_cumsum, aes(x = reorder(model, desc(model)), y = res, fill = stats)) +
     geom_bar(stat = "identity", color = "black", width = 0.6) +
     labs(x = "Model", y = "Number of cases", fill = "") +
-    geom_text(aes(y = label_ypos, label = res)) + 
-    #scale_fill_brewer(palette="Dark2") + 
-    scale_fill_brewer(palette="Paired") +
-    theme_classic(12) + 
+    geom_text(aes(y = label_ypos, label = res)) +
+    #scale_fill_brewer(palette="Dark2") +
+    scale_fill_brewer(palette = "Paired") +
+    theme_classic(12) +
     theme(legend.text=element_text(size = 12))
 
 
