@@ -286,7 +286,7 @@ confusion_no_ichor <- confusion_no_ichor %>% mutate(total = tp + fp + tn + fn,
 
 library(caret)
 Progression_conf <- ifelse(df_rule_prelim$Progression.y == "YES", 1, 0)
-confusion_threshold <- confusionMatrix(factor(df_rule_prelim_conf$StoppingRule), reference = factor(Progression_conf), positive = "1")
+confusion_threshold <- confusionMatrix(factor(df_rule_prelim$StoppingRule), reference = factor(Progression_conf), positive = "1")
 
 library(tidyr)
 confusion_threshold <- data.frame(confusion_threshold$table/nrow(df_rule_prelim)*100) %>% 
@@ -316,12 +316,14 @@ df_cumsum
 library(ggrepel)
 ggplot(data = df_cumsum, aes(x = reorder(model, desc(model)), y = res, fill = stats)) +
     geom_bar(stat = "identity", color = "black", width = 0.6) +
-    labs(x = "Model", y = "Number of cases", fill = "") +
+    labs(x = "", y = "Number of cases", fill = "") +
     geom_text(aes(y = label_ypos, label = res)) +
     #scale_fill_brewer(palette="Dark2") +
     scale_fill_brewer(palette = "Paired") +
     theme_classic(12) +
-    theme(legend.text=element_text(size = 12))
+    theme(legend.text=element_text(size = 12))# +
+    #coord_fixed(ratio = 0.04) +
+    #theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
 
 
