@@ -103,7 +103,7 @@ setwd(paste0(main_path, "models"))
 load(paste0(main_path, "models/model_2nd_stage_ichor.Rdata"))
 
 # reporting Latex
-#library(xtable)
+library(xtable)
 #str(summary(fit2_CT_ichor))
 #xtable(summary(fit2_CT_ichor)$fixed[,c(1, 3, 4)])
 #xtable(summary(fit2_CT_ichor)$spec_pars[,c(1, 3, 4)])
@@ -119,10 +119,14 @@ load(paste0(main_path, "models/model_2nd_stage_ichor.Rdata"))
 summary(fit2_CT_ichor)
 #summary(fit2_CT_no_ichor)
 
+# export to word 
+export_summs(fit2_CT_ichor, error_format = "[{conf.low}, {conf.high}]", to.file = "Word", file.name = "2nd stage.docx")
+
 #plot(fit2_CT_ichor)
 #plot(fit2_CT_no_ichor)
 
 # plot some diagnostics of the sampler
 #mcmc_plot(fit2_CT_ichor, type = "rhat") # smaller than 1.1 is ok
 #mcmc_plot(fit2_CT_no_ichor, type = "rhat") 
+
 

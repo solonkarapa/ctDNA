@@ -79,6 +79,9 @@ load(paste0(main_path,"models/model_1st_stage.Rdata"))
 # summarise output
 summary(fit1_ichor)
 
+# export to word
+export_summs(fit1_ichor, error_format = "[{conf.low}, {conf.high}]", to.file = "Word", file.name = "1st_stage.docx")
+
 # plot posterior distributions and chains
 #plot(fit1_ichor, pars = "^sd")
 #plot(fit1_ichor, pars = "^sigma")
