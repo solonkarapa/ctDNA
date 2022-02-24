@@ -232,23 +232,28 @@ CA_coord_31$threshold <- "CA 15-3 threshold 31"
 CA_coord <- rbind(CA_coord_31)
 
 # ROC - both models
+okabe <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
 g.list + 
-    geom_line(size = 1.1) +
+    geom_line(size = 1.5) +
     geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
     coord_fixed() +
     labs(col = "Model") +
-    scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
-    geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 2.5, inherit.aes = FALSE) +
+    scale_color_manual(values = c("darkorange", "purple", "black"), labels = c("with ctDNA", "without ctDNA")) +
+    #scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
+    geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 3, inherit.aes = FALSE) +
     labs(shape = "", x = "Specificity", y = "Sensitivity") +
     #annotate("point", x = best_threshold[[2]], y = best_threshold[[3]], colour = "black", size = 2.5, shape = "square") + 
-    geom_point(data = chosen_threshold, aes(x = specificity, y = sensitivity), colour = "black", size = 2.5, shape = "square") + 
-    geom_point(data = df_ichor_threshold, aes(x = spec, y = sens, shape = model), colour = "black", size = 2.5) +
+    geom_point(data = chosen_threshold, aes(x = specificity, y = sensitivity), colour = "black", size = 3, shape = "square") + 
+    geom_point(data = df_ichor_threshold, aes(x = spec, y = sens, shape = model), colour = "black", size = 3) +
     #annotate("point", x = CA_coord_35[[3]], y = CA_coord_35[[4]], colour = "black", size = 2, shape = "triangle") + 
     #geom_segment(aes(x = 0.65, y = 0.5, xend = 0.57, yend = 0.6),
     #             arrow = arrow(length = unit(0.3, "cm"))) + 
     #annotate("text", x = 0.5588235, y = 0.6, colour = "black", label = "Ca15-3", size = 5) + 
     theme_classic(12) + 
-    theme(legend.text=element_text(size = 12), legend.position = c(0.8, 0.3))
+    theme(legend.text=element_text(size = 12), legend.position = c(0.8, 0.3)) 
+
+
 
 g.list + 
     geom_line(size = 1.1) +
