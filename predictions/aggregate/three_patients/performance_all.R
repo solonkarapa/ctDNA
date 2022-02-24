@@ -239,7 +239,7 @@ g.list +
     geom_abline(slope = 1, intercept = 1, linetype = "dashed", size = 0.4) +
     coord_fixed() +
     labs(col = "Model") +
-    scale_color_manual(values = c("darkorange", "purple", "black"), labels = c("with ctDNA", "without ctDNA")) +
+    scale_color_manual(values = c("blue", "red", "black"), labels = c("with ctDNA", "without ctDNA")) +
     #scale_color_discrete(labels = c("with ctDNA", "without ctDNA")) +
     geom_point(data = CA_coord, aes(x = specificity, y = sensitivity, shape = as.factor(threshold)), size = 3, inherit.aes = FALSE) +
     labs(shape = "", x = "Specificity", y = "Sensitivity") +
