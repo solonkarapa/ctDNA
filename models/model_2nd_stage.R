@@ -1,5 +1,7 @@
 
-main_path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+#main_path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+
+main_path <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/"
 
 ##################################################################   
 ########################## Load files ############################

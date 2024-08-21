@@ -12,7 +12,7 @@ path_data <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/
 load(paste0(path_data, "validation_data.Rdata"))
 
 
-id <- 2000
+id <- 840
 
 subject <- id #unique(df_train_ichor_ind$Patient.ID)
 
@@ -78,15 +78,24 @@ source("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/predictions/helpe
 ########################################################################
 
 # loop through dataset to predict random effects
+df_final <- data.frame()
+
+# loop through dataset to predict random effects
+system.time({
 for(g in 1:length(df_new_preds_1_split)){
     
-    g <- 2
     data_new_stage1 <- df_new_preds_1_split[[g]] %>% filter(Date.ichor <= Date)
     
     print(data_new_stage1)
 
+    if(nrow(data_new_stage1) == 0){
+        next
+    }
+ 
+    print(g)
+    
     datagrid <- expand.grid(i = as.numeric(1:iters),
-                            index_patient = 2000, #subject[task_id],
+                            index_patient = id,
                             timepoint = unique(data_new_stage1$time))
     
     res <- datagrid %>%
@@ -94,15 +103,54 @@ for(g in 1:length(df_new_preds_1_split)){
         unnest_wider(res_rand, names_sep = "_") %>%
         group_by(timepoint, index_patient) %>%
         summarise(estim_inter = mean(res_rand_1), estim_slope = mean(res_rand_2)) %>%
-        rename(Patient.ID = index_patient, time_ichor = timepoint)
+        rename(Patient.ID = index_patient, time = timepoint) %>%
+        mutate(g = g)
+    
+    #print(res)
     
     # merge df with estimated random effects
-    df_stage1_prelim <- merge(res, data_new_stage1, by = c("Patient.ID", "time_ichor"))
+    df_stage1_prelim <- merge(res, data_new_stage1, by = c("Patient.ID", "time")) %>%
+        distinct(Patient.ID, Date, time, .keep_all = T) %>%
+        select(Patient.ID, Date, time, estim_inter, estim_slope, g)
+    
+    #print(df_stage1_prelim)
     
     df_final <- rbind(df_final, df_stage1_prelim)
-}
+    
+    #print(df_final)
+    
+    }
 
+})
 
-}
+print(df_final)
+
+# merge datasets     
+df_combine_2 <- merge(data_new_stage2, df_final, by = c("Patient.ID", "time")) 
+
+df_new_preds <- df_combine_2 %>% mutate(Progression = ifelse(Progression == 0, "NO", "YES"))
+
+str(df_new_preds)
+
+########################################################################
+#################################### Step 5 ############################
+########################################################################
+# load stage 2 model
+load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/model_2nd_stage_ichor.Rdata") # for mac
+#load("~/HPC/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # for HPC
+
+# calculate posterior predictive distribution  
+post_pred_ctDNA <- posterior_epred(fit2_CT_ichor, 
+                                   newdata = df_new_preds, 
+                                   re_formula = NULL,
+                                   allow_new_levels = T, 
+                                   sample_new_levels = "gaussian")
+
+# calculate average of posterior predictive distribution
+post_pred_avg <- colMeans(post_pred_ctDNA)
+
+df_new_preds_final <- cbind(df_new_preds, pred_prob = post_pred_avg)
+
+df_new_preds_final
 
 

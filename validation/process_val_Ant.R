@@ -80,7 +80,7 @@ df_ichor_RECIST <- merge(ichorCNA_treatments, RECIST2, by = "Patient.ID") %>%
 
 df_ichor_Ant <- df_ichor_RECIST %>% 
     dplyr::select(Patient.ID, Date.ichor, ichorCNA_tr, Treatment_new_final, Treatment_duration, ER.status, Her2.status, time_ichor) %>%
-    filter(Treatment_new_final != "off-treatment") # remove "off-treatment" - it's a place holder for the Ant dataset
+    filter(Treatment_new_final != "Trial Drug" & Treatment_new_final != "off-treatment") # remove "off-treatment" and "Trial Drug" - it's just a place holder for the Ant dataset
 
 ##############################################################################
 
@@ -91,6 +91,7 @@ df_RECIST_Ant <- merge(ichorCNA_treatments, RECIST2, by = "Patient.ID") %>%
            ER.status = ifelse(ER.status == "ER+", 2, 1),
            Her2.status = ifelse(Her2.status == "Her2-", 1, 2)) %>%
     distinct(Patient.ID, Date, .keep_all = T) %>%
+    mutate(Treatment_duration = as.numeric(Treatment_duration)/52.14) %>%
     dplyr::select(Patient.ID, Date, Progression, Treatment_new_final, Treatment_duration, ER.status, Her2.status, time) %>% 
     filter(Treatment_new_final != "Trial Drug" & Treatment_new_final != "off-treatment") # remove "off-treatment" and "Trial Drug" see above for explanation
  
