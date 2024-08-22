@@ -46,8 +46,20 @@ fit1_ichor <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment
                            cores = getOption("mc.cores", 2), 
                            control = list(adapt_delta = 0.99, max_treedepth = 12))
 
-setwd("~/Box/PhD/Code/ctDNA/updated/models/")
+fit1_ichor_no_Treatment <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment_duration +
+                      (1 + time_ichor | Patient.ID),
+                  data = df_train_ichor, 
+                  family = gaussian(), 
+                  prior = prior_custom,
+                  warmup = 2000,
+                  iter = 10000,
+                  chains = 2,
+                  cores = getOption("mc.cores", 2), 
+                  control = list(adapt_delta = 0.99, max_treedepth = 12))
+
+#setwd("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/")
 #save(fit1_ichor, file = "model_1st_stage.Rdata")
+#save(fit1_ichor_no_Treatment, file = "model_1st_stage_no_treat.Rdata")
 
 fit1_ichor_no_duration <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment_new_final +
                       (1 + time_ichor | Patient.ID),

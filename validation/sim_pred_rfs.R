@@ -2,7 +2,7 @@
 # get array element number
 task_id_string <- Sys.getenv("SLURM_ARRAY_TASK_ID") 
 task_id <- as.numeric(task_id_string)
-#task_id = 2
+task_id = 2
 
 ########################################################################
 
@@ -65,15 +65,34 @@ df_new_preds_1_split <- df_new_preds_1 %>% group_by(Date) %>% group_split()
 #################################### Step 3 ############################
 ########################################################################
 # load stage 1 model
-load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/model_1st_stage.Rdata") # for mac
-#load("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for HPC
 
-model_first_stage <- fit1_ichor
+treatment_model <- "no" #"yes", "no" - if the 1st stage model includes treatments or not
 
-### pre-processing MCMC chain
-iters <- 1000
-post_samples <- posterior_samples(model_first_stage)[1:iters,][1:28] # change upper limit depending on model
-post_samples <- post_samples %>% mutate(cov = cor_Patient.ID__Intercept__time_ichor *(sd_Patient.ID__Intercept * sd_Patient.ID__time_ichor))
+if(treatment_model == "yes"){
+    
+    load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/model_1st_stage.Rdata") # for mac
+    #load("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for HPC
+    
+    model_first_stage <- fit1_ichor
+    
+    ### pre-processing MCMC chain
+    iters <- 1000
+    post_samples <- posterior_samples(model_first_stage)[1:iters,][1:28] # change upper limit depending on model
+    post_samples <- post_samples %>% mutate(cov = cor_Patient.ID__Intercept__time_ichor *(sd_Patient.ID__Intercept * sd_Patient.ID__time_ichor))
+    
+    } else {
+    
+        load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/model_1st_stage_no_treat.Rdata") # for mac
+        #load("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/models/model_1st_stage.Rdata") # for HPC
+        
+        model_first_stage <- fit1_ichor_no_Treatment
+        
+        ### pre-processing MCMC chain
+        iters <- 1000
+        post_samples <- posterior_samples(model_first_stage)[1:iters,][1:9] # change upper limit depending on model
+        post_samples <- post_samples %>% mutate(cov = cor_Patient.ID__Intercept__time_ichor *(sd_Patient.ID__Intercept * sd_Patient.ID__time_ichor))
+        
+        }
 
 # load random effects prediction function - update 2 
 source("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/predictions/helper_funs/pred_rand_eff_Stage_1_update.R") # mac 
@@ -142,8 +161,8 @@ str(df_new_preds)
 #################################### Step 5 ############################
 ########################################################################
 # load stage 2 model
-#load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/model_2nd_stage_ichor.Rdata") # for mac
-load("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # HPC
+load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/model_2nd_stage_ichor.Rdata") # for mac
+#load("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/models/model_2nd_stage_ichor.Rdata") # HPC
 
 # calculate posterior predictive distribution  
 post_pred_ctDNA <- posterior_epred(fit2_CT_ichor, 
@@ -163,7 +182,7 @@ output_file <- paste0("output_pred_", task_id, ".Rdata")
 
 #### 
 setwd("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/predictions/output/") # mac
-#setwd("/rds/user/sk921/hpc-work/PhD/ctDNA/updated/predictions/output_ctDNA_project_treatment_2") # HPC uni
+#setwd("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/validation/predictions/") # HPC 
 
 save(data_new_stage1,
      df_new_preds_final,
