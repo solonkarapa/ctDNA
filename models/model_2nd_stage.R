@@ -16,12 +16,15 @@ load(paste0(main_path, "data_split/data_train_CT.Rdata")) # train CT dataset
 #data_train_CT %>% summarise(n()) %>% arrange(`n()`)
 
 # 1st stage model
-load(paste0(main_path, "models/model_1st_stage.Rdata")) # for mac
+#load(paste0(main_path, "models/model_1st_stage.Rdata")) # default
+load(paste0(main_path, "models/model_1st_stage_no_treat.Rdata")) # no treatment
 
 library(dplyr)
 
 # rename 1st stage model
-model_1st_stage <- fit1_ichor
+model_1st_stage <- fit1_ichor_no_Treatment
+
+summary(model_1st_stage)
 
 # check NA per column
 #data_train_CT %>% ungroup() %>% summarise_all(funs(sum(is.na(.))))
@@ -94,12 +97,23 @@ fit2_CT_no_ichor <- brm(Progression ~ time + ER.status + Her2.status + Treatment
                         cores = getOption("mc.cores", 2),
                         control = list(adapt_delta = 0.95, max_treedepth = 12))
 
+fit2_CT_no_Treatment <- brm(Progression ~ time + ER.status + Her2.status + estim_inter + estim_slope + (1 | Patient.ID),
+                        data = data_train_CT_final, 
+                        family = bernoulli(link = "logit"), 
+                        prior = prior_custom,
+                        warmup = 5000,
+                        iter = 100000,
+                        chains = 2,
+                        cores = getOption("mc.cores", 2),
+                        control = list(adapt_delta = 0.95, max_treedepth = 12))
+
 ############################
 setwd(paste0(main_path, "models"))
 
 # models to save
 #save(fit2_CT_ichor, file = "model_2nd_stage_ichor.Rdata")
 #save(fit2_CT_no_ichor, file = "model_2nd_stage_no_ichor.Rdata")
+save(fit2_CT_no_Treatment, file = "model_2nd_stage_no_treat.Rdata")
 
 # load fitted model
 load(paste0(main_path, "models/model_2nd_stage_ichor.Rdata"))

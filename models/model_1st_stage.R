@@ -57,7 +57,7 @@ fit1_ichor_no_Treatment <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.statu
                   cores = getOption("mc.cores", 2), 
                   control = list(adapt_delta = 0.99, max_treedepth = 12))
 
-#setwd("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/")
+setwd("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/models/")
 #save(fit1_ichor, file = "model_1st_stage.Rdata")
 #save(fit1_ichor_no_Treatment, file = "model_1st_stage_no_treat.Rdata")
 
