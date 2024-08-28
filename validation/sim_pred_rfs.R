@@ -17,7 +17,14 @@ library(purrr)
 # load data
 #path_data <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/" # mac
 path_data <- "/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/validation/" # HPC
-load(paste0(path_data, "validation_data.Rdata"))
+
+dataset_type <- "full" #"original", "full"
+
+if(dataset_type == "original"){
+    load(paste0(path_data, "validation_data.Rdata"))
+    } else {
+        load(paste0(path_data, "validation_data_full.Rdata"))
+    }
 
 subject <- unique(df_RECIST_Ant$Patient.ID)
 
@@ -192,8 +199,12 @@ df_new_preds_final
 output_file <- paste0("output_pred_", task_id, ".Rdata")
 
 # set working dir
-#setwd("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/predictions/output/") # mac
-setwd("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/validation/predictions/output/") # HPC
+if(dataset_type == "original"){
+    #setwd("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/predictions/output/") # mac
+    setwd("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/validation/predictions/output/") # HPC
+    } else {
+        setwd("/home/sk921/rds/rds-mrc-bsu/sk921/PhD/Code/ctDNA/updated/validation/predictions/output_full/") # HPC
+        }
 
 save(data_new_stage1,
      df_new_preds_final,

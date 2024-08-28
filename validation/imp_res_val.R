@@ -2,7 +2,14 @@
 ############################################
 ############################################ 
 ############################################
-path_res <-"/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/predictions/output/"
+
+dataset_type <- "full" #"original" or "full"
+
+if(dataset_type == "original"){
+    path_res <-"/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/predictions/output/"
+    } else {
+        path_res <-"/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/predictions/output_full/"
+        }
 
 files <- list.files(path_res)
 df_final <- data.frame()
