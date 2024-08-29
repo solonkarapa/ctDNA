@@ -40,6 +40,6 @@ plot(roc_val)
 auc(roc_val)
 ci.auc(roc_val)
 
-#df_final %>% ggplot(.) +
-#    geom_boxplot(aes(x = pred_prob, y = Progression))
+df_final %>% ggplot(.) +
+    geom_boxplot(aes(x = pred_prob, y = Progression))
 

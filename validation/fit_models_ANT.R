@@ -109,3 +109,9 @@ plot(roc_val)
 
 auc(roc_val)
 ci.auc(roc_val)
+
+ggplot(df_new_preds_final) +
+    geom_boxplot(aes(x = pred_prob, y = factor(Progression)))
+
+
+

@@ -7,14 +7,14 @@ library(dplyr)
 ####################################################################################
 # Antwerp
 path_data <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/" # mac
-load(paste0(path_data, "validation_data.Rdata"))
+load(paste0(path_data, "validation_data_full.Rdata"))
 
 str(df_ichor_Ant)
 str(df_RECIST_Ant)
 
 df_combine_1 <- merge(df_ichor_Ant, df_RECIST_Ant, by = "Patient.ID") %>%
     mutate(time_dist = difftime(Date.ichor, Date, units = "days")) %>%
-    group_by(Patient.ID) %>%
+    group_by(Patient.ID, Date) %>%
     slice_min(abs(time_dist))
 
 df_combine_1 %>% ggplot() +
@@ -23,6 +23,7 @@ df_combine_1 %>% ggplot() +
 # DETECT
 main_path <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/"
 load(paste0(main_path, "data_split/data_train_ichor.Rdata")) # train IchorCNA dataset
+load(paste0(main_path, "data_split/data_train_CT.Rdata")) # train CT dataset
 
 df_det <- merge(df_train_ichor, data_train_CT, by = "Patient.ID") %>%
     mutate(time_dist = time - time_ichor) %>%
@@ -53,6 +54,38 @@ mean(ranef(fit1_ichor_no_Treatment)$Patient.ID[, , 2])
 
 fixef(fit2_CT_Ant)
 fixef(fit2_CT_no_Treatment)
+
+f_Ant1 <- as.data.frame(fixef(fit1_Ant))
+f_Ant1$vars <- rownames(f_Ant1)
+rownames(f_Ant1) <- NULL
+f_Ant1$dataset <- "Antwerp"
+f_Det1 <- as.data.frame(fixef(fit1_ichor_no_Treatment))
+f_Det1$vars <- rownames(f_Det1)
+rownames(f_Det1) <- NULL
+f_Det1$dataset <- "DETECT"
+
+estim_stage1 <- rbind(f_Ant1, f_Det1)
+
+ggplot(estim_stage1) +
+    geom_point(aes(x = Estimate, y = vars)) +
+    geom_errorbar(aes(x = Estimate, y = vars, xmin = Q2.5, xmax = Q97.5), width = 0.1) +
+    facet_grid(dataset ~ .)
+
+f_Ant2 <- as.data.frame(fixef(fit2_CT_Ant))
+f_Ant2$vars <- rownames(f_Ant2)
+rownames(f_Ant2) <- NULL
+f_Ant2$dataset <- "Antwerp"
+f_Det2 <- as.data.frame(fixef(fit2_CT_no_Treatment))
+f_Det2$vars <- rownames(f_Det2)
+rownames(f_Det2) <- NULL
+f_Det2$dataset <- "DETECT"
+
+estim_stage2 <- rbind(f_Ant2, f_Det2)
+
+ggplot(estim_stage2) +
+    geom_point(aes(x = Estimate, y = vars)) +
+    geom_errorbar(aes(x = Estimate, y = vars, xmin = Q2.5, xmax = Q97.5), width = 0.1) +
+    facet_grid(dataset ~ .)
 
 #################################
 fictitious_data_stage1 <- data.frame(Patient.ID = c("A", "B", "C", "D"),  
