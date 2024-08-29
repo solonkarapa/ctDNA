@@ -5,9 +5,17 @@ main_path <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/
 ########################## Load files ############################
 ################################################################## 
 # data
-load(paste0(main_path, "validation_data.Rdata"))
+dataset_type <- "full" #"original", "full"
 
-#load("~/Box/PhD/Code/ctDNA/updated/data_split/data_dynamic_pred_CT.Rdata") # train CT dataset
+if(dataset_type == "original"){
+    load(paste0(main_path, "validation_data.Rdata"))
+} else {
+    load(paste0(main_path, "validation_data_full.Rdata"))
+}
+
+# load trained models or train them below
+#load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/models_Ant.Rdata")
+load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/models_Ant_full.Rdata")
 
 # exploratory
 # should be 146 patients
@@ -31,6 +39,7 @@ fit1_Ant <- brm(ichorCNA_tr ~ time_ichor + ER.status + Her2.status + Treatment_d
 
 model_1st_stage <- fit1_Ant
 
+
 #library(coda) # Summary Statistics For MCMC
 #p <- as.mcmc(model_1st_stage)
 #summary(p) # check time-series SE col
@@ -49,8 +58,8 @@ data_extract_model_1st_stage <- as.data.frame(model_1st_stage$fit@sim$samples[[1
 #names(data_extract_model_1st_stage)
 
 # get posterior means for random effects
-r_intercept <- data_extract_model_1st_stage %>% select(r_Patient.ID.339.Intercept. : r_Patient.ID.3903.Intercept.) %>% summarise(estim_inter = colMeans(.))
-r_slope <- data_extract_model_1st_stage %>% select(r_Patient.ID.339.time_ichor.: r_Patient.ID.3903.time_ichor.) %>% summarise(estim_slope = colMeans(.))
+r_intercept <- data_extract_model_1st_stage %>% select(r_Patient.ID.339.Intercept. : r_Patient.ID.4036.Intercept.) %>% summarise(estim_inter = colMeans(.))
+r_slope <- data_extract_model_1st_stage %>% select(r_Patient.ID.339.time_ichor.: r_Patient.ID.4036.time_ichor.) %>% summarise(estim_slope = colMeans(.))
 
 combine_model_1st_stage <- cbind(Patient.ID = unique(model_1st_stage$data$Patient.ID), r_intercept, r_slope)
 
@@ -90,9 +99,10 @@ df_new_preds_final <- cbind(data_train_CT_final, pred_prob = post_pred_avg)
 setwd(paste0(main_path))
 
 # models to save
-#save(fit1_Ant, fit2_CT_Ant, file = "models_Ant.Rdata")
+#save(fit1_Ant, fit2_CT_Ant, file = "models_Ant_full.Rdata")
 
 ############ evaluation
+library(pROC)
 roc_val <- roc(Progression ~ pred_prob, data = df_new_preds_final) # calculate stats for ichor
 
 plot(roc_val)

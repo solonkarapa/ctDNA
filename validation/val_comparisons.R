@@ -1,5 +1,10 @@
 
-############################################################################
+library(brms)
+library(brmstools)
+library(ggplot2)
+library(dplyr)
+
+####################################################################################
 # Antwerp
 path_data <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/" # mac
 load(paste0(path_data, "validation_data.Rdata"))
@@ -11,7 +16,6 @@ df_combine_1 <- merge(df_ichor_Ant, df_RECIST_Ant, by = "Patient.ID") %>%
     mutate(time_dist = difftime(Date.ichor, Date, units = "days")) %>%
     group_by(Patient.ID) %>%
     slice_min(abs(time_dist))
-
 
 df_combine_1 %>% ggplot() +
     geom_boxplot(aes(x = ichorCNA_tr, y = factor(Progression)))
@@ -35,7 +39,8 @@ main_path <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/"
 load(paste0(main_path, "models/model_1st_stage_no_treat.Rdata")) # no treatment
 load(paste0(main_path, "models/model_2nd_stage_no_treat.Rdata")) # no treatment
 
-load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/models_Ant.Rdata")
+#load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/models_Ant.Rdata")
+load("/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/validation/models_Ant_full.Rdata")
 
 fixef(fit1_Ant)
 fixef(fit1_ichor_no_Treatment)
@@ -76,13 +81,13 @@ df2 <- as.data.frame(post_pred_ctDNA_Ant_stage1)
 df2$dataset <- "Antwerp"
 data_long2 <- tidyr::gather(df2, ID, estim, A:D, factor_key = TRUE)
 
-df <- rbind(data_long1, data_long2)
+df_stage1 <- rbind(data_long1, data_long2)
 
-df_means <- df %>% group_by(dataset, ID) %>% summarise(avg = mean(estim))
+df_means_stage1 <- df_stage1 %>% group_by(dataset, ID) %>% summarise(avg = mean(estim))
 
-df %>% ggplot() +
+df_stage1 %>% ggplot() +
     geom_density(aes(x = estim, fill = dataset)) +
-    geom_vline(data = df_means, aes(xintercept = avg, linetype = dataset)) +
+    geom_vline(data = df_means_stage1, aes(xintercept = avg, linetype = dataset)) +
     facet_grid(.~ID)
 
 #################################
@@ -117,11 +122,14 @@ df2 <- as.data.frame(post_pred_ctDNA_Ant)
 df2$dataset <- "Antwerp"
 data_long2 <- tidyr::gather(df2, ID, estim, A:D, factor_key = TRUE)
 
-df <- rbind(data_long1, data_long2)
+df_stage2 <- rbind(data_long1, data_long2)
 
-df %>% ggplot() +
+df_means_stage2 <- df_stage2 %>% group_by(dataset, ID) %>% summarise(avg = mean(estim))
+
+df_stage2 %>% ggplot() +
     geom_density(aes(x = estim, fill = dataset)) +
-    facet_grid(.~ID)
+    geom_vline(data = df_means_stage2, aes(xintercept = avg, linetype = dataset)) +
+    facet_grid(. ~ ID)
 
 #### compare out-of-sample and in-sample random effects 
 df_final2 <- df_final %>% rename(Date = Date.x) # from HPC code output
