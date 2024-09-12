@@ -17,6 +17,7 @@ df_combine_1 <- merge(df_ichor_Ant, df_RECIST_Ant, by = "Patient.ID") %>%
     group_by(Patient.ID, Date) %>%
     slice_min(abs(time_dist))
 
+
 df_combine_1 %>% ggplot() +
     geom_boxplot(aes(x = ichorCNA_tr, y = factor(Progression)))
 
