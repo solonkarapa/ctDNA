@@ -1,8 +1,6 @@
 
 
 ######################### see three patients file
-
-
 library(ggplot2)
 library(dplyr)
 
@@ -10,7 +8,8 @@ library(dplyr)
 ######################## STEP 1 - load data and models #############################
 #################################################################################### 
 ######################### load test data 
-path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+#path <- c("/Users/work/Library/CloudStorage/Box-Box/PhD/Code/ctDNA/updated/")
+path <- "/Users/solon/Cloud-Drive/Projects/ctDNA_original/ctDNA/"
 
 load(paste0(path, "data_split/data_test_CT.Rdata"))
 
